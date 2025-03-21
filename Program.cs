@@ -159,7 +159,7 @@
         static void ViewReservations()
         {
             Console.WriteLine("==== View Reservations ====");
-            Console.WriteLine("No upcoming reservations");
+            Console.WriteLine("No upcoming reservations.");
         }
 
         static void CancelReservation()
