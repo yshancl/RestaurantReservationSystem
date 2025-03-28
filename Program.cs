@@ -65,15 +65,14 @@ namespace RestaurantReservationSystem
             Console.Write("Special Requests/Notes: ");
             string specialRequest = Console.ReadLine();
 
-            double totalAmount = ReservationProcess.CalculateTotalAmount(numGuests);
-            Console.WriteLine($"Total Reservation Fee: PHP{totalAmount}");
+            Console.WriteLine($"Total Reservation Fee: PHP{ReservationProcess.CalculateTotalAmount(numGuests)}");
 
             Console.Write("Enter Amount Paid: ");
             double amountPaid = Convert.ToDouble(Console.ReadLine());
 
-            if (ReservationProcess.ValidatePayment(amountPaid, totalAmount))
+            if (ReservationProcess.ValidatePayment(amountPaid, ReservationProcess.CalculateTotalAmount(numGuests)))
             {
-                double change = ReservationProcess.CalculateChange(amountPaid, totalAmount);
+                double change = ReservationProcess.CalculateChange(amountPaid, ReservationProcess.CalculateTotalAmount(numGuests));
                 Console.WriteLine(change > 0 ? $"Reservation confirmed! Your change is PHP{change}." : "Reservation success!");
             }
             else
