@@ -37,7 +37,7 @@
                 }
                 else if (selectedOption == "4")
                 {
-                    Console.WriteLine("Exiting program. Goodbye!");
+                    Console.WriteLine("Exiting program...");
                     return;
                 }
                 else
