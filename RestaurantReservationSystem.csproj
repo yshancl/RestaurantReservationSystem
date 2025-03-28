@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ReservationBusinessLogic\**" />
+    <EmbeddedResource Remove="ReservationBusinessLogic\**" />
+    <None Remove="ReservationBusinessLogic\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="ReservationBusinessLogic\ReservationBusinessLogic.csproj" />
   </ItemGroup>
 

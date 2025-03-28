@@ -57,7 +57,7 @@ namespace RestaurantReservationSystem
             string phoneNumber = Console.ReadLine();
 
             Console.Write("Number of Guests: ");
-            int numGuests = GetUserInput();
+            int numGuests = Convert.ToInt32(Console.ReadLine());
 
             Console.Write("Date (YYYY-MM-DD): ");
             string reservationDate = Console.ReadLine();
@@ -65,14 +65,15 @@ namespace RestaurantReservationSystem
             Console.Write("Special Requests/Notes: ");
             string specialRequest = Console.ReadLine();
 
-            Console.WriteLine($"Total Reservation Fee: PHP{Class1.CalculateTotalAmount(numGuests)}");
+            double totalAmount = ReservationProcess.CalculateTotalAmount(numGuests);
+            Console.WriteLine($"Total Reservation Fee: PHP{totalAmount}");
 
             Console.Write("Enter Amount Paid: ");
             double amountPaid = Convert.ToDouble(Console.ReadLine());
 
-            if (Class1.ValidatePayment(amountPaid, numGuests))
+            if (ReservationProcess.ValidatePayment(amountPaid, totalAmount))
             {
-                double change = Class1.CalculateChange(amountPaid, numGuests);
+                double change = ReservationProcess.CalculateChange(amountPaid, totalAmount);
                 Console.WriteLine(change > 0 ? $"Reservation confirmed! Your change is PHP{change}." : "Reservation success!");
             }
             else
