@@ -15,8 +15,9 @@ namespace RestaurantReservationSystem
             string[] options = {
                 "[1] Book a reservation",
                 "[2] View Reservations",
-                "[3] Cancel Reservation",
-                "[4] Exit"
+                "[3] Update Reservation",
+                "[4] Cancel Reservation",
+                "[5] Exit"
             };
 
             while (true)
@@ -38,9 +39,12 @@ namespace RestaurantReservationSystem
                         ViewReservations();
                         break;
                     case 3:
-                        CancelReservation();
+                        UpdateReservation();
                         break;
                     case 4:
+                        CancelReservation();
+                        break;
+                    case 5:
                         Console.WriteLine("Exiting...");
                         return;
                     default:
@@ -156,6 +160,57 @@ namespace RestaurantReservationSystem
             }
         }
 
+        static void UpdateReservation()
+        {
+            Console.WriteLine("==== Update Reservation ====");
+            var reservations = reservationService.GetReservations();
+
+            if (reservations.Count == 0)
+            {
+                Console.WriteLine("No reservations to update.");
+                return;
+            }
+
+            for (int i = 0; i < reservations.Count; i++)
+                Console.WriteLine($"{i + 1}. {reservations[i].FullName} - {reservations[i].ReservationDate:yyyy-MM-dd}");
+
+            Console.Write("Enter reservation number to update: ");
+            int index = Convert.ToInt32(Console.ReadLine()) - 1;
+
+            if (index >= 0 && index < reservations.Count)
+            {
+                DateTime newDate;
+                while (true)
+                {
+                    Console.Write("Enter new reservation date (YYYY-MM-DD): ");
+                    if (DateTime.TryParse(Console.ReadLine(), out newDate) && newDate.Date >= DateTime.Now.Date)
+                        break;
+                    Console.WriteLine("Invalid date. Try again.");
+                }
+
+                string[] timeSlots = { "4:00 PM - 6:30 PM", "6:30 PM - 9:00 PM", "9:00 PM - 11:00 PM" };
+                for (int i = 0; i < timeSlots.Length; i++)
+                    Console.WriteLine($"[{i + 1}] {timeSlots[i]}");
+                Console.Write("Select new time slot: ");
+                string reservationTime = timeSlots[Convert.ToInt32(Console.ReadLine()) - 1];
+
+                string[] mealTypes = { "Breakfast", "Lunch", "Dinner" };
+                for (int i = 0; i < mealTypes.Length; i++)
+                    Console.WriteLine($"[{i + 1}] {mealTypes[i]}");
+                Console.Write("Select new meal type: ");
+                string mealType = mealTypes[Convert.ToInt32(Console.ReadLine()) - 1];
+
+                Console.Write("New Special Requests: ");
+                string specialRequest = Console.ReadLine();
+
+                reservationService.UpdateReservation(index, newDate, reservationTime, mealType, specialRequest);
+                Console.WriteLine("Reservation updated.");
+            }
+            else
+            {
+                Console.WriteLine("Invalid reservation number.");
+            }
+        }
         static int GetUserInput()
         {
             Console.Write("[User Input]: ");

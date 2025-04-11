@@ -5,7 +5,7 @@ namespace ReservationBusinessLogic
     public class ReservationProcess
     {
         private double pricePerGuest = 750;
-        private ReservationDataService.ReservationDataService dataService = new ReservationDataService.ReservationDataService();  
+        private ReservationDataService.ReservationDataService dataService = new ReservationDataService.ReservationDataService();
 
         public double CalculateTotalAmount(int guests)
         {
@@ -52,6 +52,11 @@ namespace ReservationBusinessLogic
         public void CancelReservation(int index)
         {
             dataService.CancelReservation(index);
+        }
+
+        public void UpdateReservation(int index, DateTime date, string time, string meal, string request)
+        {
+            dataService.UpdateReservation(index, date, time, meal, request);
         }
 
         public List<string> GetReservationDetails(int index)

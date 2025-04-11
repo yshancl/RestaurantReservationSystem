@@ -41,6 +41,15 @@
             if (index >= 0 && index < reservations.Count)
                 reservations.RemoveAt(index);
         }
-
+        public void UpdateReservation(int index, DateTime date, string time, string meal, string request)
+        {
+            if (index >= 0 && index < reservations.Count)
+            {
+                reservations[index].ReservationDate = date;
+                reservations[index].ReservationTime = time;
+                reservations[index].MealType = meal;
+                reservations[index].SpecialRequest = request;
+            }
+        }
     }
 }
