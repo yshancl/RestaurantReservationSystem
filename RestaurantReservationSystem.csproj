@@ -9,8 +9,11 @@
 
   <ItemGroup>
     <Compile Remove="ReservationBusinessLogic\**" />
+    <Compile Remove="ReservationDataLogic\**" />
     <EmbeddedResource Remove="ReservationBusinessLogic\**" />
+    <EmbeddedResource Remove="ReservationDataLogic\**" />
     <None Remove="ReservationBusinessLogic\**" />
+    <None Remove="ReservationDataLogic\**" />
   </ItemGroup>
 
   <ItemGroup>

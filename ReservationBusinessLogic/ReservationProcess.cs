@@ -1,85 +1,71 @@
-﻿namespace ReservationBusinessLogic
+﻿using ReservationDataService;
+
+namespace ReservationBusinessLogic
 {
-    public class Reservation
+    public class ReservationProcess
     {
-        public string FullName;
-        public string PhoneNumber;
-        public int NumGuests;
-        public DateTime ReservationDate;
-        public DateTime BookingDateTime;
-        public string SpecialRequest;
-        public string ReservationTime;
-        public string MealType;
+        private double pricePerGuest = 750;
+        private ReservationDataService.ReservationDataService dataService = new ReservationDataService.ReservationDataService();  
 
-        public Reservation(string fullName, string phoneNumber, int numGuests, DateTime reservationDate, DateTime bookingDateTime, string specialRequest, string reservationTime, string mealType)
+        public double CalculateTotalAmount(int guests)
         {
-            FullName = fullName;
-            PhoneNumber = phoneNumber;
-            NumGuests = numGuests;
-            ReservationDate = reservationDate;
-            BookingDateTime = bookingDateTime;
-            SpecialRequest = specialRequest;
-            ReservationTime = reservationTime;
-            MealType = mealType;
-        }
-    }
-
-    public static class ReservationProcess
-    {
-        private static List<Reservation> reservations = new List<Reservation>();
-        private static double pricePerGuest = 750;
-
-        public static double CalculateTotalAmount(int numGuests)
-        {
-            return numGuests * pricePerGuest;
+            return guests * pricePerGuest;
         }
 
-        public static bool ValidatePayment(double amountPaid, double totalAmount)
+        public bool ValidatePayment(double paid, double total)
         {
-            return amountPaid >= totalAmount;
+            return paid >= total;
         }
 
-        public static double CalculateChange(double amountPaid, double totalAmount)
+        public double CalculateChange(double paid, double total)
         {
-            return amountPaid >= totalAmount ? amountPaid - totalAmount : 0;
+            return paid - total;
         }
 
-        public static void AddReservation(string fullName, string phoneNumber, int numGuests, DateTime reservationDate, DateTime bookingDateTime, string specialRequest, string reservationTime, string mealType)
+        public void AddReservation(string name, string phone, int guests, DateTime date, DateTime booked, string note, string time, string meal)
         {
-            reservations.Add(new Reservation(fullName, phoneNumber, numGuests, reservationDate, bookingDateTime, specialRequest, reservationTime, mealType));
-        }
-
-        public static List<Reservation> GetReservations()
-        {
-            return reservations;
-        }
-
-        public static int GetReservationsCount()
-        {
-            return reservations.Count;
-        }
-
-        public static void CancelReservation(int index)
-        {
-            if (index >= 0 && index < reservations.Count)
+            Reservation reservation = new Reservation
             {
-                reservations.RemoveAt(index);
-            }
+                FullName = name,
+                PhoneNumber = phone,
+                NumGuests = guests,
+                ReservationDate = date,
+                BookingDateTime = booked,
+                SpecialRequest = note,
+                ReservationTime = time,
+                MealType = meal
+            };
+
+            dataService.AddReservation(reservation);
         }
 
-        // Business logic only returns data, no console output
-        public static List<string> GetReservationDetails(int index)
+        public List<Reservation> GetReservations()
         {
-            var reservation = reservations[index];
+            return dataService.GetReservations();
+        }
+
+        public int GetReservationsCount()
+        {
+            return dataService.GetReservationsCount();
+        }
+
+        public void CancelReservation(int index)
+        {
+            dataService.CancelReservation(index);
+        }
+
+        public List<string> GetReservationDetails(int index)
+        {
+            var r = dataService.GetReservation(index);
             return new List<string>
             {
-                $"Name: {reservation.FullName}",
-                $"Phone: {reservation.PhoneNumber}",
-                $"Guests: {reservation.NumGuests}",
-                $"Reservation Date: {reservation.ReservationDate:yyyy-MM-dd}",
-                $"Time: {reservation.ReservationTime}",
-                $"Meal Type: {reservation.MealType}",
-                $"Special Request: {reservation.SpecialRequest}"
+                $"Name: {r.FullName}",
+                $"Phone: {r.PhoneNumber}",
+                $"Guests: {r.NumGuests}",
+                $"Date: {r.ReservationDate:yyyy-MM-dd}",
+                $"Time: {r.ReservationTime}",
+                $"Meal: {r.MealType}",
+                $"Special Request: {r.SpecialRequest}"
             };
         }
     }

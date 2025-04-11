@@ -1,10 +1,13 @@
 ﻿using ReservationBusinessLogic;
 using System;
+using System.Collections.Generic;
 
 namespace RestaurantReservationSystem
 {
     internal class Program
     {
+        static ReservationProcess reservationService = new ReservationProcess();
+
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Seoul House!");
@@ -19,8 +22,7 @@ namespace RestaurantReservationSystem
             while (true)
             {
                 Console.WriteLine("\n=== Menu ===");
-                Console.WriteLine("\nSelect and option:");
-                foreach (string option in options)
+                foreach (var option in options)
                 {
                     Console.WriteLine(option);
                 }
@@ -39,10 +41,10 @@ namespace RestaurantReservationSystem
                         CancelReservation();
                         break;
                     case 4:
-                        Console.WriteLine("Exiting program...");
+                        Console.WriteLine("Exiting...");
                         return;
                     default:
-                        Console.WriteLine("Invalid option. Please select a valid option.");
+                        Console.WriteLine("Invalid option.");
                         break;
                 }
             }
@@ -51,7 +53,6 @@ namespace RestaurantReservationSystem
         static void BookReservation()
         {
             Console.WriteLine("\n==== Book a Reservation ====");
-
             Console.Write("Full Name: ");
             string fullName = Console.ReadLine();
 
@@ -65,139 +66,100 @@ namespace RestaurantReservationSystem
             while (true)
             {
                 Console.Write("Reservation Date (YYYY-MM-DD): ");
-                if (DateTime.TryParse(Console.ReadLine(), out reservationDate))
-                {
-                    if (reservationDate.Date >= DateTime.Now.Date)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Cannot book a reservation in the past. Please enter a valid date.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid format. Please enter the date as YYYY-MM-DD.");
-                }
+                if (DateTime.TryParse(Console.ReadLine(), out reservationDate) && reservationDate.Date >= DateTime.Now.Date)
+                    break;
+                Console.WriteLine("Invalid date. Try again.");
             }
 
             DateTime bookingDateTime = DateTime.Now;
-            Console.WriteLine($"Reservation Made On: {bookingDateTime}");
 
             string[] timeSlots = { "4:00 PM - 6:30 PM", "6:30 PM - 9:00 PM", "9:00 PM - 11:00 PM" };
-            Console.WriteLine("Available Time Slots:");
             for (int i = 0; i < timeSlots.Length; i++)
-            {
                 Console.WriteLine($"[{i + 1}] {timeSlots[i]}");
-            }
-
-            Console.Write("Select a time slot (1-3): ");
-            int timeSlotIndex = Convert.ToInt16(Console.ReadLine());
-            string reservationTime = timeSlots[timeSlotIndex - 1];
+            Console.Write("Select time slot: ");
+            string reservationTime = timeSlots[Convert.ToInt32(Console.ReadLine()) - 1];
 
             string[] mealTypes = { "Breakfast", "Lunch", "Dinner" };
-            Console.WriteLine("Meal Type:");
             for (int i = 0; i < mealTypes.Length; i++)
-            {
                 Console.WriteLine($"[{i + 1}] {mealTypes[i]}");
-            }
+            Console.Write("Select meal type: ");
+            string mealType = mealTypes[Convert.ToInt32(Console.ReadLine()) - 1];
 
-            Console.Write("Select a meal type (1-3): ");
-            int mealTypeIndex = Convert.ToInt16(Console.ReadLine());
-            string mealType = mealTypes[mealTypeIndex - 1];
-
-            Console.Write("Special Requests/Notes: ");
+            Console.Write("Special Requests: ");
             string specialRequest = Console.ReadLine();
 
-            Console.WriteLine($"Total Reservation Fee: PHP{ReservationProcess.CalculateTotalAmount(numGuests)}");
+            double total = reservationService.CalculateTotalAmount(numGuests);
+            Console.WriteLine($"Total Fee: PHP{total}");
 
-            Console.Write("Enter Amount Paid: ");
+            Console.Write("Enter amount paid: ");
             double amountPaid = Convert.ToDouble(Console.ReadLine());
 
-            if (ReservationProcess.ValidatePayment(amountPaid, ReservationProcess.CalculateTotalAmount(numGuests)))
+            if (reservationService.ValidatePayment(amountPaid, total))
             {
-                Console.WriteLine(
-                    ReservationProcess.CalculateChange(amountPaid, ReservationProcess.CalculateTotalAmount(numGuests)) > 0
-                    ? $"Reservation confirmed! Your change is PHP{ReservationProcess.CalculateChange(amountPaid, ReservationProcess.CalculateTotalAmount(numGuests))}."
-                    : "Reservation success!"
-                );
+                double change = reservationService.CalculateChange(amountPaid, total);
+                Console.WriteLine(change > 0 ? $"Change: PHP{change}" : "Exact amount received.");
 
-                ReservationProcess.AddReservation(fullName, phoneNumber, numGuests, reservationDate, bookingDateTime, specialRequest, reservationTime, mealType);
-                Console.WriteLine("\n===== Reservation Summary =====");
-                Console.WriteLine($"Name: {fullName}");
-                Console.WriteLine($"Phone: {phoneNumber}");
-                Console.WriteLine($"Guests: {numGuests}");
-                Console.WriteLine($"Reservation Date: {reservationDate:yyyy-MM-dd}");
-                Console.WriteLine($"Time Slot: {reservationTime}");
-                Console.WriteLine($"Meal Type: {mealType}");
-                Console.WriteLine($"Booking Date & Time: {bookingDateTime}");
-                Console.WriteLine($"Special Request: {specialRequest}");
-                Console.WriteLine("Thank you for your reservation!");
+                reservationService.AddReservation(fullName, phoneNumber, numGuests, reservationDate, bookingDateTime, specialRequest, reservationTime, mealType);
+                Console.WriteLine("Reservation confirmed!");
             }
             else
             {
-                Console.WriteLine("Insufficient amount. Reservation not confirmed.");
+                Console.WriteLine("Insufficient payment. Reservation not confirmed.");
             }
-        }
-
-        static int GetUserInput()
-        {
-            Console.Write("[User Input]: ");
-            return Convert.ToInt16(Console.ReadLine());
         }
 
         static void ViewReservations()
         {
             Console.WriteLine("==== View Reservations ====");
-            if (ReservationProcess.GetReservationsCount() == 0)
+            var reservations = reservationService.GetReservations();
+
+            if (reservations.Count == 0)
             {
-                Console.WriteLine("No upcoming reservations.");
+                Console.WriteLine("No reservations.");
+                return;
             }
-            else
+
+            for (int i = 0; i < reservations.Count; i++)
             {
-                var reservations = ReservationProcess.GetReservations();
-                for (int i = 0; i < reservations.Count; i++)
-                {
-                    var reservationDetails = ReservationProcess.GetReservationDetails(i);
-                    foreach (var detail in reservationDetails)
-                    {
-                        Console.WriteLine(detail);
-                    }
-                    Console.WriteLine("====================");
-                }
+                var details = reservationService.GetReservationDetails(i);
+                foreach (var line in details)
+                    Console.WriteLine(line);
+                Console.WriteLine("-------------------------");
             }
         }
 
         static void CancelReservation()
         {
             Console.WriteLine("==== Cancel Reservation ====");
+            var reservations = reservationService.GetReservations();
 
-            // Display all reservations with their name and reservation date
-            if (ReservationProcess.GetReservationsCount() == 0)
+            if (reservations.Count == 0)
             {
-                Console.WriteLine("No reservations available to cancel.");
+                Console.WriteLine("No reservations to cancel.");
                 return;
             }
 
-            var reservations = ReservationProcess.GetReservations();
             for (int i = 0; i < reservations.Count; i++)
-            {
                 Console.WriteLine($"{i + 1}. {reservations[i].FullName} - {reservations[i].ReservationDate:yyyy-MM-dd}");
-            }
 
-            Console.Write("Enter the reservation number to cancel: ");
-            int reservationNumber = Convert.ToInt16(Console.ReadLine()) - 1;
+            Console.Write("Enter reservation number to cancel: ");
+            int index = Convert.ToInt32(Console.ReadLine()) - 1;
 
-            if (reservationNumber >= 0 && reservationNumber < ReservationProcess.GetReservationsCount())
+            if (index >= 0 && index < reservations.Count)
             {
-                ReservationProcess.CancelReservation(reservationNumber);
-                Console.WriteLine("Reservation canceled successfully.");
+                reservationService.CancelReservation(index);
+                Console.WriteLine("Reservation cancelled.");
             }
             else
             {
                 Console.WriteLine("Invalid reservation number.");
             }
+        }
+
+        static int GetUserInput()
+        {
+            Console.Write("[User Input]: ");
+            return Convert.ToInt32(Console.ReadLine());
         }
     }
 }
