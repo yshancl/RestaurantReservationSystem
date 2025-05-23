@@ -1,15 +1,17 @@
-﻿using ReservationBusinessLogic;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using ReservationBusinessLogic;
+using ReservationDataService;
 
 namespace RestaurantReservationSystem
 {
     internal class Program
     {
-        static ReservationProcess reservationService = new ReservationProcess();
+        static ReservationProcess reservationService;
 
         static void Main(string[] args)
         {
+            reservationService = new ReservationProcess(new InMemoryDataService());
+
             Console.WriteLine("Welcome to Seoul House!");
 
             string[] options = {
@@ -211,6 +213,7 @@ namespace RestaurantReservationSystem
                 Console.WriteLine("Invalid reservation number.");
             }
         }
+
         static int GetUserInput()
         {
             Console.Write("[User Input]: ");

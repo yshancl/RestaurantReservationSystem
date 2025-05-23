@@ -1,11 +1,20 @@
-﻿using ReservationDataService;
+﻿using ReservationDataLogic;
+using ReservationDataService;
+using System;
+using System.Collections.Generic;
 
 namespace ReservationBusinessLogic
 {
     public class ReservationProcess
     {
-        private double pricePerGuest = 750;
-        private ReservationDataService.ReservationDataService dataService = new ReservationDataService.ReservationDataService();
+        private readonly double pricePerGuest = 750;
+        private readonly IReservationDataService dataService;
+
+        // Constructor with dependency injection for IDataService
+        public ReservationProcess(IReservationDataService dataService)
+        {
+            this.dataService = dataService;
+        }
 
         public double CalculateTotalAmount(int guests)
         {

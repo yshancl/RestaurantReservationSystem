@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ReservationDataLogic;
+using ReservationDataService;
+using System;
 using System.Collections.Generic;
 
-namespace ReservationDataLogic
+namespace ReservationDataService
 {
     public class InMemoryDataService : IReservationDataService
     {
