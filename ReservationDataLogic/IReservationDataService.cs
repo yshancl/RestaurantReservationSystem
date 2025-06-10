@@ -1,17 +1,19 @@
 ﻿using ReservationDataLogic;
-using ReservationDataService;
 using System;
 using System.Collections.Generic;
 
-namespace ReservationDataLogic
+namespace ReservationDataService
 {
     public interface IReservationDataService
     {
-        void AddReservation(Reservation reservation);
-        List<Reservation> GetReservations();
-        Reservation GetReservation(int index);
-        int GetReservationsCount();
-        void CancelReservation(int index);
-        void UpdateReservation(int index, DateTime date, string time, string meal, string request);
+        public void AddReservation(Reservation reservation);
+        public List<Reservation> GetReservations();
+        public Reservation GetReservation(int reservationId);
+        public int GetReservationsCount();
+        public void CancelReservation(int reservationId);
+        public void UpdateReservation(int reservationId, DateTime date, string time, string meal, string request);
+        public List<Reservation> LoadReservations();
+        public void SaveReservations(List<Reservation> updatedReservations);
     }
 }
+

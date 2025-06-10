@@ -1,47 +1,59 @@
-﻿using System;
+﻿using ReservationDataLogic;
+using System;
 using System.Collections.Generic;
 
-namespace ReservationDataLogic
+namespace ReservationDataService
 {
-    public class InMemoryDataService : IReservationDataService
+    public class ReservationDataService : IReservationDataService
     {
-        private List<Reservation> reservations = new List<Reservation>();
+        private IReservationDataService dataService;
+
+        public ReservationDataService()
+        {
+            //dataService = new TextFileDataService();
+            //dataService = new JsonFileDataService();
+            dataService = new DBDataService();
+            //dataService = new InMemory();
+        }
 
         public void AddReservation(Reservation reservation)
         {
-            reservations.Add(reservation);
+            dataService.AddReservation(reservation);
         }
 
         public List<Reservation> GetReservations()
         {
-            return reservations;
+            return dataService.GetReservations();
         }
 
-        public Reservation GetReservation(int index)
+        public Reservation GetReservation(int reservationId)
         {
-            return reservations[index];
+            return dataService.GetReservation(reservationId);
         }
 
         public int GetReservationsCount()
         {
-            return reservations.Count;
+            return dataService.GetReservationsCount(); 
         }
 
-        public void CancelReservation(int index)
+        public void CancelReservation(int reservationId)
         {
-            if (index >= 0 && index < reservations.Count)
-                reservations.RemoveAt(index);
+            dataService.CancelReservation(reservationId);
         }
 
-        public void UpdateReservation(int index, DateTime date, string time, string meal, string request)
+        public void UpdateReservation(int reservationId, DateTime date, string time, string meal, string request)
         {
-            if (index >= 0 && index < reservations.Count)
-            {
-                reservations[index].ReservationDate = date;
-                reservations[index].ReservationTime = time;
-                reservations[index].MealType = meal;
-                reservations[index].SpecialRequest = request;
-            }
+            dataService.UpdateReservation(reservationId, date, time, meal, request);
+        }
+
+        public List<Reservation> LoadReservations()
+        {
+            return dataService.LoadReservations();
+        }
+
+        public void SaveReservations(List<Reservation> updatedReservations)
+        {
+            dataService.SaveReservations(updatedReservations);
         }
     }
 }

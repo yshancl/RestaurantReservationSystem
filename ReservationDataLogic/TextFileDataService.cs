@@ -1,95 +1,88 @@
 ﻿using ReservationDataLogic;
+using ReservationDataService;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
-namespace ReservationDataService
+namespace ReservationDataLogic
 {
+    using ReservationDataService;
     public class TextFileDataService : IReservationDataService
     {
-        private readonly string filePath = "reservations.txt";
-        private List<Reservation> reservations = new List<Reservation>();
+        private readonly string filePath = "reservation.txt";
+        private List<Reservation> reservations = new();
+        private int nextId = 1;
 
-        public TextFileDataService()
-        {
-            LoadFromFile();
-        }
+        public TextFileDataService() => LoadFromFile();
 
         private void LoadFromFile()
         {
-            if (!File.Exists(filePath))
-            {
-                reservations = new List<Reservation>();
-                return;
-            }
+            reservations.Clear();
+            if (!File.Exists(filePath)) return;
 
-            var lines = File.ReadAllLines(filePath);
-            reservations = lines
-                .Select(line =>
+            foreach (var line in File.ReadAllLines(filePath))
+            {
+                var parts = line.Split('|');
+                if (parts.Length == 9)
                 {
-                    var parts = line.Split('|');
-                    return new Reservation
+                    reservations.Add(new Reservation
                     {
-                        FullName = parts[0],
-                        PhoneNumber = parts[1],
-                        NumGuests = int.Parse(parts[2]),
-                        ReservationDate = DateTime.Parse(parts[3]),
-                        BookingDateTime = DateTime.Parse(parts[4]),
-                        SpecialRequest = parts[5],
-                        ReservationTime = parts[6],
-                        MealType = parts[7]
-                    };
-                }).ToList();
+                        ReservationId = int.Parse(parts[0]),
+                        FullName = parts[1],
+                        PhoneNumber = parts[2],
+                        NumGuests = int.Parse(parts[3]),
+                        ReservationDate = DateTime.Parse(parts[4]),
+                        BookingDateTime = DateTime.Parse(parts[5]),
+                        SpecialRequest = parts[6],
+                        ReservationTime = parts[7],
+                        MealType = parts[8]
+                    });
+                }
+            }
+            nextId = reservations.Any() ? reservations.Max(r => r.ReservationId) + 1 : 1;
         }
 
         private void SaveToFile()
         {
-            var lines = reservations.Select(r =>
-                $"{r.FullName}|{r.PhoneNumber}|{r.NumGuests}|{r.ReservationDate:O}|{r.BookingDateTime:O}|{r.SpecialRequest}|{r.ReservationTime}|{r.MealType}");
+            var lines = reservations.Select(r => $"{r.ReservationId}|{r.FullName}|{r.PhoneNumber}|{r.NumGuests}|{r.ReservationDate}|{r.BookingDateTime}|{r.SpecialRequest}|{r.ReservationTime}|{r.MealType}");
             File.WriteAllLines(filePath, lines);
         }
 
         public void AddReservation(Reservation reservation)
         {
+            reservation.ReservationId = nextId++;
             reservations.Add(reservation);
             SaveToFile();
         }
 
-        public List<Reservation> GetReservations()
+        public List<Reservation> GetReservations() => reservations;
+
+        public Reservation GetReservation(int reservationId) => reservations.FirstOrDefault(r => r.ReservationId == reservationId);
+
+        public int GetReservationsCount() => reservations.Count;
+
+        public void CancelReservation(int reservationId)
         {
-            return reservations;
+            var r = GetReservation(reservationId);
+            if (r != null) reservations.Remove(r);
+            SaveToFile();
         }
 
-        public Reservation GetReservation(int index)
+        public void UpdateReservation(int reservationId, DateTime date, string time, string meal, string request)
         {
-            return reservations[index];
-        }
-
-        public int GetReservationsCount()
-        {
-            return reservations.Count;
-        }
-
-        public void CancelReservation(int index)
-        {
-            if (index >= 0 && index < reservations.Count)
+            var r = GetReservation(reservationId);
+            if (r != null)
             {
-                reservations.RemoveAt(index);
+                r.ReservationDate = date;
+                r.ReservationTime = time;
+                r.MealType = meal;
+                r.SpecialRequest = request;
                 SaveToFile();
             }
         }
 
-        public void UpdateReservation(int index, DateTime date, string time, string meal, string request)
-        {
-            if (index >= 0 && index < reservations.Count)
-            {
-                reservations[index].ReservationDate = date;
-                reservations[index].ReservationTime = time;
-                reservations[index].MealType = meal;
-                reservations[index].SpecialRequest = request;
-                SaveToFile();
-            }
-        }
+        public List<Reservation> LoadReservations() => reservations;
+        public void SaveReservations(List<Reservation> updatedReservations) => reservations = updatedReservations;
     }
 }
+

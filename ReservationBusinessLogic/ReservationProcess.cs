@@ -10,7 +10,6 @@ namespace ReservationBusinessLogic
         private readonly double pricePerGuest = 750;
         private readonly IReservationDataService dataService;
 
-        // Constructor with dependency injection for IDataService
         public ReservationProcess(IReservationDataService dataService)
         {
             this.dataService = dataService;
@@ -58,19 +57,19 @@ namespace ReservationBusinessLogic
             return dataService.GetReservationsCount();
         }
 
-        public void CancelReservation(int index)
+        public void CancelReservation(int reservationId)
         {
-            dataService.CancelReservation(index);
+            dataService.CancelReservation(reservationId);
         }
 
-        public void UpdateReservation(int index, DateTime date, string time, string meal, string request)
+        public void UpdateReservation(int reservationId, DateTime date, string time, string meal, string request)
         {
-            dataService.UpdateReservation(index, date, time, meal, request);
+            dataService.UpdateReservation(reservationId, date, time, meal, request);
         }
 
-        public List<string> GetReservationDetails(int index)
+        public List<string> GetReservationDetails(int reservationId)
         {
-            var r = dataService.GetReservation(index);
+            var r = dataService.GetReservation(reservationId);
             return new List<string>
             {
                 $"Name: {r.FullName}",

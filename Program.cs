@@ -1,5 +1,6 @@
 ﻿using System;
 using ReservationBusinessLogic;
+using ReservationDataLogic;
 using ReservationDataService;
 
 namespace RestaurantReservationSystem
@@ -10,7 +11,9 @@ namespace RestaurantReservationSystem
 
         static void Main(string[] args)
         {
-            reservationService = new ReservationProcess(new InMemoryDataService());
+            reservationService = new ReservationProcess(new DBDataService());
+            //reservationService = new ReservationProcess(new ReservationDataLogic.JsonFileDataService());
+            // Replace above with: new TextFileDataService(), JsonFileDataService()
 
             Console.WriteLine("Welcome to Seoul House!");
 
@@ -125,9 +128,9 @@ namespace RestaurantReservationSystem
                 return;
             }
 
-            for (int i = 0; i < reservations.Count; i++)
+            foreach (var r in reservations)
             {
-                var details = reservationService.GetReservationDetails(i);
+                var details = reservationService.GetReservationDetails(r.ReservationId);
                 foreach (var line in details)
                     Console.WriteLine(line);
                 Console.WriteLine("-------------------------");
@@ -153,7 +156,8 @@ namespace RestaurantReservationSystem
 
             if (index >= 0 && index < reservations.Count)
             {
-                reservationService.CancelReservation(index);
+                int reservationId = reservations[index].ReservationId;
+                reservationService.CancelReservation(reservationId);
                 Console.WriteLine("Reservation cancelled.");
             }
             else
@@ -181,6 +185,8 @@ namespace RestaurantReservationSystem
 
             if (index >= 0 && index < reservations.Count)
             {
+                int reservationId = reservations[index].ReservationId;
+
                 DateTime newDate;
                 while (true)
                 {
@@ -205,7 +211,7 @@ namespace RestaurantReservationSystem
                 Console.Write("New Special Requests: ");
                 string specialRequest = Console.ReadLine();
 
-                reservationService.UpdateReservation(index, newDate, reservationTime, mealType, specialRequest);
+                reservationService.UpdateReservation(reservationId, newDate, reservationTime, mealType, specialRequest);
                 Console.WriteLine("Reservation updated.");
             }
             else
