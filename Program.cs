@@ -11,9 +11,8 @@ namespace RestaurantReservationSystem
 
         static void Main(string[] args)
         {
-            reservationService = new ReservationProcess(new DBDataService());
-            //reservationService = new ReservationProcess(new ReservationDataLogic.JsonFileDataService());
-            // Replace above with: new TextFileDataService(), JsonFileDataService()
+            IReservationDataService dataService = new ReservationDataService.ReservationDataService();
+            reservationService = new ReservationProcess(dataService);
 
             Console.WriteLine("Welcome to Seoul House!");
 
