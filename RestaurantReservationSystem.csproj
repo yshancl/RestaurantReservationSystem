@@ -11,12 +11,21 @@
     <Compile Remove="ReservationBusinessLogic\**" />
     <Compile Remove="ReservationCommon\**" />
     <Compile Remove="ReservationDataLogic\**" />
+    <Compile Remove="ReservationUI\**" />
+    <Compile Remove="UIReservation\**" />
+    <Compile Remove="WinFormsApp1\**" />
     <EmbeddedResource Remove="ReservationBusinessLogic\**" />
     <EmbeddedResource Remove="ReservationCommon\**" />
     <EmbeddedResource Remove="ReservationDataLogic\**" />
+    <EmbeddedResource Remove="ReservationUI\**" />
+    <EmbeddedResource Remove="UIReservation\**" />
+    <EmbeddedResource Remove="WinFormsApp1\**" />
     <None Remove="ReservationBusinessLogic\**" />
     <None Remove="ReservationCommon\**" />
     <None Remove="ReservationDataLogic\**" />
+    <None Remove="ReservationUI\**" />
+    <None Remove="UIReservation\**" />
+    <None Remove="WinFormsApp1\**" />
   </ItemGroup>
 
   <ItemGroup>
