@@ -12,8 +12,8 @@ namespace ReservationDataService
         {
             //dataService = new TextFileDataService();
             //dataService = new JsonFileDataService();
-            //dataService = new DBDataService();
-            dataService = new InMemory();
+            dataService = new DBDataService();
+            //dataService = new InMemory();
         }
 
         public void AddReservation(Reservation reservation)

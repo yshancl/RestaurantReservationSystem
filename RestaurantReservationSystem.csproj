@@ -13,18 +13,24 @@
     <Compile Remove="ReservationDataLogic\**" />
     <Compile Remove="ReservationUI\**" />
     <Compile Remove="UIReservation\**" />
+    <Compile Remove="WebApplication1\**" />
+    <Compile Remove="WebApplication2\**" />
     <Compile Remove="WinFormsApp1\**" />
     <EmbeddedResource Remove="ReservationBusinessLogic\**" />
     <EmbeddedResource Remove="ReservationCommon\**" />
     <EmbeddedResource Remove="ReservationDataLogic\**" />
     <EmbeddedResource Remove="ReservationUI\**" />
     <EmbeddedResource Remove="UIReservation\**" />
+    <EmbeddedResource Remove="WebApplication1\**" />
+    <EmbeddedResource Remove="WebApplication2\**" />
     <EmbeddedResource Remove="WinFormsApp1\**" />
     <None Remove="ReservationBusinessLogic\**" />
     <None Remove="ReservationCommon\**" />
     <None Remove="ReservationDataLogic\**" />
     <None Remove="ReservationUI\**" />
     <None Remove="UIReservation\**" />
+    <None Remove="WebApplication1\**" />
+    <None Remove="WebApplication2\**" />
     <None Remove="WinFormsApp1\**" />
   </ItemGroup>
 

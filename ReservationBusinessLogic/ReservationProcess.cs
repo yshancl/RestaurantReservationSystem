@@ -1,5 +1,6 @@
 ﻿using ReservationDataLogic;
 using ReservationDataService;
+using STSBusinessDataLogic;
 using System;
 using System.Collections.Generic;
 
@@ -45,6 +46,8 @@ namespace ReservationBusinessLogic
             };
 
             dataService.AddReservation(reservation);
+            EmailService emailService = new EmailService();
+            emailService.SendEmail();
         }
 
         public List<Reservation> GetReservations()
