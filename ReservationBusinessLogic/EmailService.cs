@@ -5,11 +5,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using ReservationDataLogic;
 
 namespace STSBusinessDataLogic
 {
     public class EmailService
     {
+        private readonly IConfiguration _configuration;
+
+        public EmailService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public void SendEmail()
         {
             var message = new MimeMessage();
@@ -23,13 +31,13 @@ namespace STSBusinessDataLogic
             };
             using (var client = new SmtpClient())
             {
-                var smtpHost = "sandbox.smtp.mailtrap.io";
+                var smtpHost = _configuration["EmailSettings:SmtpHost"];
                 var smtpPort = 2525;
                 var tls = MailKit.Security.SecureSocketOptions.StartTls;
                 client.Connect(smtpHost, smtpPort, tls);
 
-                var userName = "63d24222eb6a32";
-                var password = "b8cd7662f3667c";
+                var userName = _configuration["EmailSettings:SmtpUsername"];
+                var password = _configuration["EmailSettings:SmtpPassword"];
 
                 client.Authenticate(userName, password);
 

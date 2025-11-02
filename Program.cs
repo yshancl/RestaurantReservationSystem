@@ -2,6 +2,7 @@
 using ReservationBusinessLogic;
 using ReservationDataLogic;
 using ReservationDataService;
+using Microsoft.Extensions.Configuration; // Add this using statement
 
 namespace RestaurantReservationSystem
 {
@@ -12,7 +13,11 @@ namespace RestaurantReservationSystem
         static void Main(string[] args)
         {
             IReservationDataService dataService = new ReservationDataService.ReservationDataService();
-            reservationService = new ReservationProcess(dataService);
+
+            // Create a default configuration instance
+            IConfiguration configuration = new ConfigurationBuilder().Build();
+
+            reservationService = new ReservationProcess(dataService, configuration);
 
             Console.WriteLine("Welcome to Seoul House!");
 

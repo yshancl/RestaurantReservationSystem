@@ -1,4 +1,5 @@
-﻿using ReservationDataLogic;
+﻿using Microsoft.Extensions.Configuration;
+using ReservationDataLogic;
 using ReservationDataService;
 using STSBusinessDataLogic;
 using System;
@@ -10,10 +11,12 @@ namespace ReservationBusinessLogic
     {
         private readonly double pricePerGuest = 750;
         private readonly IReservationDataService dataService;
+        private readonly IConfiguration configuration;
 
-        public ReservationProcess(IReservationDataService dataService)
+        public ReservationProcess(IReservationDataService dataService, IConfiguration configuration)
         {
             this.dataService = dataService;
+            this.configuration = configuration;
         }
 
         public double CalculateTotalAmount(int guests)
@@ -46,7 +49,7 @@ namespace ReservationBusinessLogic
             };
 
             dataService.AddReservation(reservation);
-            EmailService emailService = new EmailService();
+            EmailService emailService = new EmailService(configuration);
             emailService.SendEmail();
         }
 

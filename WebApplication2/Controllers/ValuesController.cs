@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ReservationDataLogic;
 using ReservationBusinessLogic;
+using Microsoft.Extensions.Configuration; 
 
 namespace WebApplication2.Controllers
 {
@@ -11,10 +12,10 @@ namespace WebApplication2.Controllers
     {
         private readonly ReservationProcess reservationProcess;
 
-        public ValuesController()
+        public ValuesController(IConfiguration configuration) 
         {
             var dataService = new ReservationDataService.ReservationDataService();
-            reservationProcess = new ReservationProcess(dataService);
+            reservationProcess = new ReservationProcess(dataService, configuration); 
         }
 
         [HttpGet]
